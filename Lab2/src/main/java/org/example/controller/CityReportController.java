@@ -1,9 +1,9 @@
 package org.example.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.example.dto.CityReportDto;
 import org.example.entity.CityReport;
 import org.example.service.CityReportService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/city-reports")
-@RequiredArgsConstructor
 public class CityReportController {
 
-    private final CityReportService service;
+    @Autowired
+    private CityReportService service;
 
     @GetMapping
     public List<CityReport> getAll() {
@@ -30,6 +30,11 @@ public class CityReportController {
     @ResponseStatus(HttpStatus.CREATED)
     public CityReport create(@RequestBody CityReportDto dto) {
         return service.create(dto);
+    }
+
+    @PostMapping("/{id}/reject")
+    public CityReport reject(@PathVariable Long id) {
+        return service.rejectReport(id);
     }
 
     @PatchMapping("/{id}")

@@ -9,6 +9,7 @@ import org.example.repository.CityObjectRepository;
 import org.example.repository.CityReportRepository;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,5 +76,21 @@ public class CityReportService {
     public void delete(Long id) {
         findById(id);
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public CityReport rejectReport(Long id) {
+        CityReport report = findById(id);
+
+        if ("RESOLVED".equals(report.getStatus())) {
+            throw new RuntimeException("Нельзя отклонить обращение, так как проблема уже решена (RESOLVED)");
+        }
+        if ("REJECTED".equals(report.getStatus())) {
+            throw new RuntimeException("Обращение уже было отклонено ранее");
+        }
+
+        report.setStatus("REJECTED");
+
+        return repository.save(report);
     }
 }
